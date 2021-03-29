@@ -18,3 +18,5 @@ Datasets/cifar-10-batches-mat/test_batch.mat
 Datasets/cifar-10-matlab.tar.gz
 
 Datasets/
+
+*.asv
