@@ -22,66 +22,45 @@ entry to have Gaussian random values with zero mean and standard
 deviation .01. You should use the Matlab function randn to create
 this data.
 %}
+% P = Kxn
+% X = dxn
+% Y = Kxn one hot
+% y = 1xn
 K = size(trainY,1);
 d = size(trainX,1);
 W = 0.01*randn(K,d);
 b = 0.01*randn(K,1);
 lambda = 0.01;
-
-%P = EvaluateClassifier(trainX(:, 1:100), W, b)
-%J = ComputeCost(trainX(:, 1:100), trainY(:, 1:100), W, b, lambda)
-%acc = ComputeAccuracy(trainX(:, 1:100), trainy(1:100), W, b)
-P = EvaluateClassifier(trainX(:, 1:100), W, b);
-[grad_W, grad_b] = ComputeGradients(trainX(:, 1:100), trainY(:, 1:100), P, W, lambda);
-
-
-function [X, Y, y] = LoadBatch(filename)
-    A = load(filename);
-    X = double(permute(A.data, [2,1]));
-    y = double(A.labels+1);
-    Y = double(permute(y==1:10,[2,1]));
-end
-
-function X = PreProcess(X)
-    mean_X = mean(X, 2);
-    std_X = std(X, 0, 2);
-    X = X - repmat(mean_X, [1, size(X, 2)]);
-    X = X ./ repmat(std_X, [1, size(X, 2)]);
-end
-
 % P = Kxn
 % X = dxn
 % Y = Kxn one hot
 % y = 1xn
-function P = EvaluateClassifier(X, W, b)
-    s = W*X +b;
-    denom = sum(exp(s),1);
-    P = zeros(size(W,1),size(X,2));
-    for i =1:size(s,2)
-        P(:,i) = exp(s(:,i))/denom(i);
-    end
-end
 
-function J = ComputeCost(X, Y, W, b, lambda)
-    P = EvaluateClassifier(X, W, b);
-    lcross = -log(dot(Y,P));
-    J = sum(lcross)/size(X,2);
-    W_squared = W.^2;
-    J = J + lambda*sum(W_squared(:));
-end
 
-function acc = ComputeAccuracy(X, y, W, b)
-    P = EvaluateClassifier(X, W, b);
-    [~,I] = max(P);
-    acc = sum(permute(I,[2,1])==y)/size(X,2);
-end
 
-function [grad_W, grad_b] = ComputeGradients(X, Y, P, W, lambda)
-    n = size(X,2);
-    G_batch = -(Y-P);
-    grad_W = 1/n*G_batch*X.' + 2*lambda*W;
-    grad_b = 1/n*G_batch*ones(n,1);
-end
+
+%P = EvaluateClassifier(trainX(:, 1:100), W, b)
+%J = ComputeCost(trainX(:, 1:100), trainY(:, 1:100), W, b, lambda)
+%acc = ComputeAccuracy(trainX(:, 1:100), trainy(1:100), W, b)
+% testing analytic gradient
+gradTestX = trainX(1:20, 1);
+gradTestY = trainY(:, 1);
+gradTestW = W(:, 1:20);
+eps = 1e-6;
+gradTestP = EvaluateClassifier(gradTestX, gradTestW, b);
+[grad_W, grad_b] = ComputeGradients(gradTestX, gradTestY, gradTestP, gradTestW, lambda);
+[ngrad_b_slow, ngrad_W_slow] = ComputeGradsNumSlow(gradTestX, gradTestY, gradTestW, b, lambda, 1e-6);
+[ngrad_b_fast, ngrad_W_fast] = ComputeGradsNum(gradTestX, gradTestY, gradTestW, b, lambda, 1e-6);
+assert(testSame(grad_W,ngrad_W_slow, eps));
+assert(testSame(grad_b,ngrad_b_slow, eps));
+
+
+
+
+
+
+
+
 
 
 

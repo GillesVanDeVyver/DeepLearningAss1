@@ -1,3 +1,5 @@
+
+
 function [grad_b, grad_W] = ComputeGradsNum(X, Y, W, b, lambda, h)
 
 no = size(W, 1);
