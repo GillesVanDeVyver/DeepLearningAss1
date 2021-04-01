@@ -43,7 +43,7 @@ b = 0.01*randn(K,1);
 % y = 1xn
 
 
-[Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY, validX, validY, GDparams, W, b, lambda, title);
+[Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY, validX, validY, GDparams, W, b, lambda, title,1);
 finalAcc = ComputeAccuracy(testX, testy, Wstar, bstar)
 
 for i=1:10
@@ -61,19 +61,6 @@ montage(s_im, 'Size', [5,5]);
 %acc = ComputeAccuracy(trainX(:, 1:100), trainy(1:100), W, b)
 
 % testing analytic gradient
-%{
-gradTestX = trainX(1:20, 1);
-gradTestY = trainY(:, 1);
-gradTestW = W(:, 1:20);
-eps = 1e-6;
-gradTestP = EvaluateClassifier(gradTestX, gradTestW, b);
-[grad_W, grad_b] = ComputeGradients(gradTestX, gradTestY, gradTestP, gradTestW, lambda);
-[ngrad_b_slow, ngrad_W_slow] = ComputeGradsNumSlow(gradTestX, gradTestY, gradTestW, b, lambda, 1e-6);
-[ngrad_b_fast, ngrad_W_fast] = ComputeGradsNum(gradTestX, gradTestY, gradTestW, b, lambda, 1e-6);
-assert(testSame(grad_W,ngrad_W_slow, eps));
-assert(testSame(grad_b,ngrad_b_slow, eps));
-%}
-
 
 
 

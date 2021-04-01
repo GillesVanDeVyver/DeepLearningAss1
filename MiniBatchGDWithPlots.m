@@ -1,4 +1,4 @@
-function [Wstar, bstar] = MiniBatchGDWithPlots(X, Y, XValid, YValid, GDparams, W, b, lambda, plotTitle)
+function [Wstar, bstar] = MiniBatchGDWithPlots(X, Y, XValid, YValid, GDparams, W, b, lambda, plotTitle, SVM)
     rng(400);
     n_batch = GDparams.n_batch;
     eta = GDparams.eta;
@@ -20,11 +20,14 @@ function [Wstar, bstar] = MiniBatchGDWithPlots(X, Y, XValid, YValid, GDparams, W
             Xbatch = Xshuffle(:, j_start:j_end);
             Ybatch = Yshuffle(:, j_start:j_end);
             Pbacth = EvaluateClassifier(Xbatch, Wstar, bstar);
-            [grad_W, grad_b] = ComputeGradients(Xbatch, Ybatch, Pbacth, Wstar, lambda);
+            if SVM
+                [grad_W, grad_b] = ComputeGradientsSVM(Xbatch, Ybatch, b, Wstar, lambda);
+            else
+                [grad_W, grad_b]= ComputeGradients(Xbatch, Ybatch, Pbacth, Wstar, lambda);
+            end
             Wstar = Wstar - eta*grad_W;
             bstar = bstar - eta*grad_b;
         end
-        %i
         eta = eta*.9;
         costTrain(i+1) = ComputeCost(X, Y, Wstar, bstar,lambda);
         costValid(i+1) = ComputeCost(XValid, YValid, Wstar, bstar,lambda);
@@ -38,7 +41,7 @@ function [Wstar, bstar] = MiniBatchGDWithPlots(X, Y, XValid, YValid, GDparams, W
     legend({'training loss','validation loss'},'Location','northeast')
     title(plotTitle)
     axis tight
-    print -depsc loss_decreasing_learning_rate
+    print -depsc loss_SVM_paras3
 
 
 
