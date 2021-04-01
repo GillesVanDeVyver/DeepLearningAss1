@@ -1,7 +1,7 @@
 rng(400);
 lambda = .1;
-GDparams = struct('n_batch',100,'eta',0.001,'n_epochs',40);
-title = 'lambda=.1, n epochs=40, n batch=100, eta=.001';
+GDparams = struct('n_batch',100,'eta',0.01,'n_epochs',40);
+title = 'Decreasing learning rate';
 
 
 
@@ -15,9 +15,9 @@ title = 'lambda=.1, n epochs=40, n batch=100, eta=.001';
 trainX = [data_batch_1X data_batch_2X data_batch_3X data_batch_4X data_batch_5X(:,1:9000)];
 trainY = [data_batch_1Y data_batch_2Y data_batch_3Y data_batch_4Y data_batch_5Y(:,1:9000)];
 trainy = [data_batch_1y;data_batch_2y;data_batch_3y;data_batch_4y;data_batch_5y(1:9000)];
-validationX = data_batch_5X(:,9000:10000);
-validationY = data_batch_5Y(:,9000:10000);
-validationy = data_batch_5y(9000:10000);
+validX = data_batch_5X(:,9000:10000);
+validY = data_batch_5Y(:,9000:10000);
+validy = data_batch_5y(9000:10000);
 
 
 trainX = PreProcess(trainX);
@@ -40,6 +40,7 @@ end
 figure
 montage(s_im, 'Size', [5,5]);
 
+print -depsc images_decreasing_learning_rate
 
 
 

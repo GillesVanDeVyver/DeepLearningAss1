@@ -25,6 +25,7 @@ function [Wstar, bstar] = MiniBatchGDWithPlots(X, Y, XValid, YValid, GDparams, W
             bstar = bstar - eta*grad_b;
         end
         %i
+        eta = eta*.9;
         costTrain(i+1) = ComputeCost(X, Y, Wstar, bstar,lambda);
         costValid(i+1) = ComputeCost(XValid, YValid, Wstar, bstar,lambda);
     end
@@ -37,6 +38,8 @@ function [Wstar, bstar] = MiniBatchGDWithPlots(X, Y, XValid, YValid, GDparams, W
     legend({'training loss','validation loss'},'Location','northeast')
     title(plotTitle)
     axis tight
+    print -depsc loss_decreasing_learning_rate
+
 
 
 end
