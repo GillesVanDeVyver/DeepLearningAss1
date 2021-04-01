@@ -24,21 +24,17 @@ function [Wstar, bstar] = MiniBatchGDWithPlots(X, Y, XValid, YValid, GDparams, W
             Wstar = Wstar - eta*grad_W;
             bstar = bstar - eta*grad_b;
         end
-        %i
         costTrain(i+1) = ComputeCost(X, Y, Wstar, bstar,lambda);
         costValid(i+1) = ComputeCost(XValid, YValid, Wstar, bstar,lambda);
     end
     epochInds = 0:n_epochs;
     figure
     plot(epochInds,costTrain,epochInds,costValid)
-    %ylim([1.5 2.5])
     xlabel('epoch') 
     ylabel('loss')
     legend({'training loss','validation loss'},'Location','northeast')
     title(plotTitle)
     axis tight
-
-
 end
 
 
