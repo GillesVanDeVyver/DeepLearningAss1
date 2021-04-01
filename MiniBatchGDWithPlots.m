@@ -35,16 +35,12 @@ function [Wstar, bstar] = MiniBatchGDWithPlots(X, Y, XValid, YValid, GDparams, W
     epochInds = 0:n_epochs;
     figure
     plot(epochInds,costTrain,epochInds,costValid)
-    %ylim([1.5 2.5])
     xlabel('epoch') 
     ylabel('loss')
     legend({'training loss','validation loss'},'Location','northeast')
     title(plotTitle)
     axis tight
-    print -depsc loss_cross-entr_paras3
-
-
-
+    print -depsc loss_SVM_paras3
 end
 
 

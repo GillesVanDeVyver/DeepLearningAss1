@@ -1,7 +1,7 @@
 rng(400);
 lambda = .1;
 GDparams = struct('n_batch',100,'eta',0.001,'n_epochs',100);
-title = 'cross-entr lambda=.1, n epochs=40, n batch=100, eta=.01';
+title = 'SVM lambda=.1, n epochs=100, n batch=100, eta=.01';
 
 
 
@@ -19,20 +19,22 @@ validX = data_batch_5X(:,9000:10000);
 validY = data_batch_5Y(:,9000:10000);
 validy = data_batch_5y(9000:10000);
 
-
+% preprocess data
 trainX = PreProcess(trainX);
 validX = PreProcess(validX);
 testX = PreProcess(testX);
 
+% random initialisation
 K = size(trainY,1);
 d = size(trainX,1);
 W = 0.01*randn(K,d);
 b = 0.01*randn(K,1);
 
-
-[Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY, validX, validY, GDparams, W, b, lambda, title, 0);
+[Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY, validX, validY, GDparams, W, b, lambda, title, 1);
+% print final accuracy
 finalAcc = ComputeAccuracy(testX, testy, Wstar, bstar)
 
+% plot resulting images
 for i=1:10
     im = reshape(Wstar(i, :), 32, 32, 3);
     s_im{i} = (im - min(im(:))) / (max(im(:)) - min(im(:)));
@@ -41,25 +43,34 @@ end
 figure
 montage(s_im, 'Size', [5,5]);
 
-print -depsc images_cross-entr_paras3
+
+print -depsc images_SVM_paras3
 
 
 
-
-
-
-%{ 
+%{
 % Checking gradient of SVM
 
 gradTestX = trainX(1:20, 1);
 gradTestY = trainY(:, 1);
 gradTestW = W(:, 1:20);
 eps = 1e-6;
-[grad_W, grad_b] = ComputeGradientsSVM(gradTestX, gradTestY, b, gradTestW, lambda);
-[ngrad_b_slow, ngrad_W_slow] = ComputeGradsNumSlowSVM(gradTestX, gradTestY, gradTestW, b, lambda, 1e-6);
+[grad_W_SVM, grad_b_SVM] = ComputeGradientsSVM(gradTestX, gradTestY, b, gradTestW, lambda);
+[ngrad_b_slow_SVM, ngrad_W_slow_SVM] = ComputeGradsNumSlowSVM(gradTestX, gradTestY, gradTestW, b, lambda, 1e-6);
+assert(testSame(grad_W_SVM,ngrad_W_slow_SVM, eps));
+assert(testSame(grad_b_SVM,ngrad_b_slow_SVM, eps));
+
+% Checking gradient of cross-entropy
+
+gradTestX = trainX(1:20, 1);
+gradTestY = trainY(:, 1);
+gradTestW = W(:, 1:20);
+eps = 1e-6;
+gradTestP = EvaluateClassifier(gradTestX, gradTestW, b);
+[grad_W, grad_b] = ComputeGradients(gradTestX, gradTestY, gradTestP, gradTestW, lambda);
+[ngrad_b_slow, ngrad_W_slow] = ComputeGradsNumSlow(gradTestX, gradTestY, gradTestW, b, lambda, 1e-6);
 assert(testSame(grad_W,ngrad_W_slow, eps));
 assert(testSame(grad_b,ngrad_b_slow, eps));
 
 %}
-
 
