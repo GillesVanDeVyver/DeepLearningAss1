@@ -1,7 +1,7 @@
 rng(400);
 lambda = .1;
 GDparams = struct('n_batch',100,'eta',0.001,'n_epochs',100);
-title = 'SVM lambda=.1, n epochs=40, n batch=100, eta=.01';
+title = 'cross-entr lambda=.1, n epochs=40, n batch=100, eta=.01';
 
 
 
@@ -30,7 +30,7 @@ W = 0.01*randn(K,d);
 b = 0.01*randn(K,1);
 
 
-[Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY, validX, validY, GDparams, W, b, lambda, title, 1);
+[Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY, validX, validY, GDparams, W, b, lambda, title, 0);
 finalAcc = ComputeAccuracy(testX, testy, Wstar, bstar)
 
 for i=1:10
@@ -41,7 +41,7 @@ end
 figure
 montage(s_im, 'Size', [5,5]);
 
-print -depsc images_SVM_paras3
+print -depsc images_cross-entr_paras3
 
 
 

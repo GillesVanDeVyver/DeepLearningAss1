@@ -41,7 +41,7 @@ function [Wstar, bstar] = MiniBatchGDWithPlots(X, Y, XValid, YValid, GDparams, W
     legend({'training loss','validation loss'},'Location','northeast')
     title(plotTitle)
     axis tight
-    print -depsc loss_SVM_paras3
+    print -depsc loss_cross-entr_paras3
 
 
 
