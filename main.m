@@ -15,11 +15,16 @@ K = size(trainY,1);
 d = size(trainX,1);
 m = 50;
 
-[W1,b1,W2,b2] = init_params(K,d,m);
-whos W1
-whos W2
-whos b1
+[W,b] = init_params(K,d,m);
+W1 = W{1};
+W2 = W{2};
+b1 = b{1};
+b2 = b{2};
 
+whos W1
+whos b1
+whos W2
+whos b2
 
 %{
 
