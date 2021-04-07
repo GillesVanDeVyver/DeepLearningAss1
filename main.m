@@ -11,10 +11,20 @@ title = 'lambda=1, n epochs=40, n batch=100, eta=.001';
 trainX = PreProcess(trainX);
 validX = PreProcess(validX);
 testX = PreProcess(testX);
-
-% random initialisation
 K = size(trainY,1);
 d = size(trainX,1);
+m = 50;
+
+[W1,b1,W2,b2] = init_params(K,d,m);
+whos W1
+whos W2
+whos b1
+
+
+%{
+
+% random initialisation
+
 W = 0.01*randn(K,d);
 b = 0.01*randn(K,1);
 
@@ -32,18 +42,19 @@ end
 figure
 montage(s_im, 'Size', [5,5]);
 
+%}
 
 % checking gradient
-%{
+
 gradTestX = trainX(1:20, 1);
 gradTestY = trainY(:, 1);
-gradTestW = W(:, 1:20);
+gradTestW1 = W1(:, 1:20);
 eps = 1e-6;
-gradTestP = EvaluateClassifier(gradTestX, gradTestW, b);
-[grad_W, grad_b] = ComputeGradients(gradTestX, gradTestY, gradTestP, gradTestW, lambda);
-[ngrad_b_slow, ngrad_W_slow] = ComputeGradsNumSlow(gradTestX, gradTestY, gradTestW, b, lambda, 1e-6);
-[ngrad_b_fast, ngrad_W_fast] = ComputeGradsNum(gradTestX, gradTestY, gradTestW, b, lambda, 1e-6);
-assert(testSame(grad_W,ngrad_W_slow, eps));
-assert(testSame(grad_b,ngrad_b_slow, eps));
-%}
+gradTestP = EvaluateClassifier(gradTestX, gradTestW1, b1);
+%[grad_W, grad_b] = ComputeGradients(gradTestX, gradTestY, gradTestP, gradTestW, lambda);
+[ngrad_b_slow, ngrad_W_slow] = ComputeGradsNumSlow(gradTestX, gradTestY, gradTestW1, b1, lambda, 1e-6);
+[ngrad_b_fast, ngrad_W_fast] = ComputeGradsNum(gradTestX, gradTestY, gradTestW1, b1, lambda, 1e-6);
+%assert(testSame(grad_W,ngrad_W_slow, eps));
+%assert(testSame(grad_b,ngrad_b_slow, eps));
+
 
