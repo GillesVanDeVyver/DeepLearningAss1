@@ -14,7 +14,7 @@ testX = PreProcess(testX);
 K = size(trainY,1);
 d = size(trainX,1);
 m = 50;
-
+nb_layers=2;
 [W,b] = init_params(K,d,m);
 W1 = W{1};
 W2 = W{2};
@@ -54,12 +54,19 @@ montage(s_im, 'Size', [5,5]);
 gradTestX = trainX(1:20, 1);
 gradTestY = trainY(:, 1);
 gradTestW1 = W1(:, 1:20);
+gradTestW2 = W2;
+gradTestW = {gradTestW1,gradTestW2};
+
 eps = 1e-6;
-gradTestP = EvaluateClassifier(gradTestX, gradTestW1, b1);
-%[grad_W, grad_b] = ComputeGradients(gradTestX, gradTestY, gradTestP, gradTestW, lambda);
-[ngrad_b_slow, ngrad_W_slow] = ComputeGradsNumSlow(gradTestX, gradTestY, gradTestW1, b1, lambda, 1e-6);
-[ngrad_b_fast, ngrad_W_fast] = ComputeGradsNum(gradTestX, gradTestY, gradTestW1, b1, lambda, 1e-6);
-%assert(testSame(grad_W,ngrad_W_slow, eps));
-%assert(testSame(grad_b,ngrad_b_slow, eps));
+[gradTestP,h,s] = EvaluateClassifier(gradTestX, gradTestW, b);
+[grad_W, grad_b] = ComputeGradients(h, gradTestY, gradTestP, gradTestW, s, lambda);
+[ngrad_b_slow, ngrad_W_slow] = ComputeGradsNumSlow(gradTestX, gradTestY, gradTestW, b, lambda, 1e-6);
+[ngrad_b_fast, ngrad_W_fast] = ComputeGradsNum(gradTestX, gradTestY, gradTestW, b, lambda, 1e-6);
+grad_W1 = grad_W{1};
+for l = 1:nb_layers
+    assert(testSame(grad_W{l},ngrad_W_slow{l}, eps));
+    assert(testSame(grad_b{l},ngrad_b_slow{l}, eps));
+
+end
 
 

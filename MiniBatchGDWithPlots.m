@@ -19,8 +19,8 @@ function [Wstar, bstar] = MiniBatchGDWithPlots(X, Y, XValid, YValid, GDparams, W
             j_end = j*n_batch;
             Xbatch = Xshuffle(:, j_start:j_end);
             Ybatch = Yshuffle(:, j_start:j_end);
-            Pbacth = EvaluateClassifier(Xbatch, Wstar, bstar);
-            [grad_W, grad_b] = ComputeGradients(Xbatch, Ybatch, Pbacth, Wstar, lambda);
+            [Pbacth,h] = EvaluateClassifier(Xbatch, Wstar, bstar);
+            [grad_W, grad_b] = ComputeGradients(h, Ybatch, Pbacth, Wstar, lambda);
             Wstar = Wstar - eta*grad_W;
             bstar = bstar - eta*grad_b;
         end
