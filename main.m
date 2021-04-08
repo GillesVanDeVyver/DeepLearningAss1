@@ -1,6 +1,5 @@
 rng(400);
-lambda = 1;
-GDparams = struct('n_batch',100,'eta',0.001,'n_epochs',40);
+GDparams = struct('n_batch',100,'eta',0.001,'n_epochs',40, 'lambda',1);
 title = 'lambda=1, n epochs=40, n batch=100, eta=.001';
 
 [trainX, trainY, trainy] = LoadBatch('./Datasets/cifar-10-batches-mat/data_batch_1.mat');
@@ -20,53 +19,50 @@ W1 = W{1};
 W2 = W{2};
 b1 = b{1};
 b2 = b{2};
-
+%{
 whos W1
 whos b1
 whos W2
 whos b2
-
-%{
-
-% random initialisation
-
-W = 0.01*randn(K,d);
-b = 0.01*randn(K,1);
-
-[Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY, validX, validY, GDparams, W, b, lambda, title);
-
-% print final accuracy
-finalAcc = ComputeAccuracy(testX, testy, Wstar, bstar)
-
-% plot resulting images
-for i=1:10
-    im = reshape(Wstar(i, :), 32, 32, 3);
-    s_im{i} = (im - min(im(:))) / (max(im(:)) - min(im(:)));
-    s_im{i} = permute(s_im{i}, [2, 1, 3]);
-end
-figure
-montage(s_im, 'Size', [5,5]);
-
 %}
 
+
+[Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY, validX, validY, GDparams, W, b, title);
+
+% print final accuracy
+final_acc = ComputeAccuracy(testX, testy, Wstar, bstar)
+
+
+%{
 % checking gradient
 
-gradTestX = trainX(1:20, 1);
-gradTestY = trainY(:, 1);
+gradTestX = trainX(1:20, 1:5);
+gradTestY = trainY(:, 1:5);
 gradTestW1 = W1(:, 1:20);
 gradTestW2 = W2;
 gradTestW = {gradTestW1,gradTestW2};
 
 eps = 1e-6;
 [gradTestP,h,s] = EvaluateClassifier(gradTestX, gradTestW, b);
-[grad_W, grad_b] = ComputeGradients(h, gradTestY, gradTestP, gradTestW, s, lambda);
-[ngrad_b_slow, ngrad_W_slow] = ComputeGradsNumSlow(gradTestX, gradTestY, gradTestW, b, lambda, 1e-6);
-[ngrad_b_fast, ngrad_W_fast] = ComputeGradsNum(gradTestX, gradTestY, gradTestW, b, lambda, 1e-6);
-grad_W1 = grad_W{1};
+[grad_W, grad_b] = ComputeGradients(h, gradTestY, gradTestP, gradTestW, s, GDparams.lambda);
+[ngrad_b_slow, ngrad_W_slow] = ComputeGradsNumSlow(gradTestX, gradTestY, gradTestW, b, GDparams.lambda, 1e-6);
+[ngrad_b_fast, ngrad_W_fast] = ComputeGradsNum(gradTestX, gradTestY, gradTestW, b, GDparams.lambda, 1e-6);
 for l = 1:nb_layers
     assert(testSame(grad_W{l},ngrad_W_slow{l}, eps));
     assert(testSame(grad_b{l},ngrad_b_slow{l}, eps));
 
 end
 
+%{
+Sanity check. Train 100 training samples for long time to get low test
+error
+%}
+GDparams_test = struct('n_batch',10,'eta',0.001,'n_epochs',200, 'lambda',0);
+trainX_test = trainX(:,1:100);
+trainY_test = trainY(:,1:100);
+trainy_test = trainy(1:100);
+[W_test,b_test] = init_params(K,d,m);
+[Wstar, bstar] = MiniBatchGDWithPlots(trainX_test, trainY_test, validX, validY, GDparams_test, W_test, b_test, title);
+final_train_acc = ComputeAccuracy(trainX_test, trainy_test, Wstar, bstar)
 
+%}
