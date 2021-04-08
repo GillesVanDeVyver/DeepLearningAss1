@@ -1,6 +1,9 @@
 rng(400);
-GDparams = struct('n_batch',100,'eta',0.001,'n_epochs',40, 'lambda',1);
-title = 'lambda=1, n epochs=40, n batch=100, eta=.001';
+GDparams = struct('n_batch',100,'eta_min',1e-5,'eta_max',1e-1,'n_s', 500, 'nb_cycles',1,'lambda',.01);
+title = strcat('n_batch=',string(GDparams.n_batch),',eta_min=',string(GDparams.eta_min),...
+                ',eta_max=',string(GDparams.eta_max),',n_s=',string(GDparams.n_s),...
+                ',lambda=',string(GDparams.lambda),',nb_cycles=',string(GDparams.nb_cycles));
+         
 
 [trainX, trainY, trainy] = LoadBatch('./Datasets/cifar-10-batches-mat/data_batch_1.mat');
 [validX, validY, validy] = LoadBatch('./Datasets/cifar-10-batches-mat/data_batch_2.mat');
@@ -64,5 +67,4 @@ trainy_test = trainy(1:100);
 [W_test,b_test] = init_params(K,d,m);
 [Wstar, bstar] = MiniBatchGDWithPlots(trainX_test, trainY_test, validX, validY, GDparams_test, W_test, b_test, title);
 final_train_acc = ComputeAccuracy(trainX_test, trainy_test, Wstar, bstar)
-
 %}
