@@ -5,9 +5,19 @@ title = strcat('n_batch=',string(GDparams.n_batch),',eta_min=',string(GDparams.e
                 ',lambda=',string(GDparams.lambda),',nb_cycles=',string(GDparams.nb_cycles));
          
 
-[trainX, trainY, trainy] = LoadBatch('./Datasets/cifar-10-batches-mat/data_batch_1.mat');
-[validX, validY, validy] = LoadBatch('./Datasets/cifar-10-batches-mat/data_batch_2.mat');
+% Use all avaialable data
+[data_batch_1X, data_batch_1Y, data_batch_1y] = LoadBatch('./Datasets/cifar-10-batches-mat/data_batch_1.mat');
+[data_batch_2X, data_batch_2Y, data_batch_2y] = LoadBatch('./Datasets/cifar-10-batches-mat/data_batch_2.mat');
+[data_batch_3X, data_batch_3Y, data_batch_3y] = LoadBatch('./Datasets/cifar-10-batches-mat/data_batch_3.mat');
+[data_batch_4X, data_batch_4Y, data_batch_4y] = LoadBatch('./Datasets/cifar-10-batches-mat/data_batch_4.mat');
+[data_batch_5X, data_batch_5Y, data_batch_5y] = LoadBatch('./Datasets/cifar-10-batches-mat/data_batch_5.mat');
 [testX, testY, testy] = LoadBatch('./Datasets/cifar-10-batches-mat/test_batch.mat');
+trainX = [data_batch_1X data_batch_2X data_batch_3X data_batch_4X data_batch_5X(:,1:5000)];
+trainY = [data_batch_1Y data_batch_2Y data_batch_3Y data_batch_4Y data_batch_5Y(:,1:5000)];
+trainy = [data_batch_1y;data_batch_2y;data_batch_3y;data_batch_4y;data_batch_5y(1:5000)];
+validX = data_batch_5X(:,5000:10000);
+validY = data_batch_5Y(:,5000:10000);
+validy = data_batch_5y(5000:10000);
 
 % preprocess data
 trainX = PreProcess(trainX);
