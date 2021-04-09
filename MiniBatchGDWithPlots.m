@@ -18,26 +18,14 @@ function [Wstar, bstar] = MiniBatchGDWithPlots(X, Y, XValid, YValid, GDparams, W
     for l=0:GDparams.nb_cycles-1
         while t<(2*l+1)*n_s
             eta = GDparams.eta_min+(t-2*l*n_s)/n_s*(GDparams.eta_max-GDparams.eta_min);
-            [Wstar,bstar,batch_offset] = update(eta,n,X,Y,Wstar,bstar,GDparams,nb_layers,batch_offset);
+            [Wstar,bstar,batch_offset,X,Y,costTrain,costValid,eval_step] = update(eta,n,X,Y,XValid, YValid,Wstar,bstar,GDparams,nb_layers,batch_offset,t,eval_interval,eval_step,costTrain,costValid);
             t=t+1;
-            if mod(t,eval_interval) == 0
-                costTrain(eval_step) = ComputeCost(X, Y, Wstar, bstar,GDparams.lambda);
-                costValid(eval_step) = ComputeCost(XValid, YValid, Wstar, bstar,GDparams.lambda);
-                eval_step = eval_step+1;
-                t
-            end
-            
         end
         while t<2*(l+1)*n_s
             eta= GDparams.eta_max-(t-(2*l+1)*n_s)/n_s*(GDparams.eta_max-GDparams.eta_min);
-            [Wstar,bstar,batch_offset] = update(eta,n,X,Y,Wstar,bstar,GDparams,nb_layers,batch_offset);
+            [Wstar,bstar,batch_offset,X,Y,costTrain,costValid,eval_step] = update(eta,n,X,Y,XValid, YValid,Wstar,bstar,GDparams,nb_layers,batch_offset,t,eval_interval,eval_step,costTrain,costValid);
             t=t+1;
-            if mod(t,eval_interval) == 0
-                costTrain(eval_step) = ComputeCost(X, Y, Wstar, bstar,GDparams.lambda);
-                costValid(eval_step) = ComputeCost(XValid, YValid, Wstar, bstar,GDparams.lambda);
-                eval_step = eval_step+1;
-                t
-            end
+
             
         end
     end
@@ -50,7 +38,7 @@ function [Wstar, bstar] = MiniBatchGDWithPlots(X, Y, XValid, YValid, GDparams, W
     ylabel('loss')
     legend({'training loss','validation loss'},'Location','northeast')
     title(plotTitle)
-    print -depsc cost_exercise_3
+    print -depsc cost_exercise_4
 end
 
 

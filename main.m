@@ -1,5 +1,5 @@
 rng(400);
-GDparams = struct('n_batch',100,'eta_min',1e-5,'eta_max',1e-1,'n_s', 500, 'nb_cycles',1,'lambda',.01);
+GDparams = struct('n_batch',100,'eta_min',1e-5,'eta_max',1e-1,'n_s', 800, 'nb_cycles',3,'lambda',.01);
 title = strcat('n_batch=',string(GDparams.n_batch),',eta_min=',string(GDparams.eta_min),...
                 ',eta_max=',string(GDparams.eta_max),',n_s=',string(GDparams.n_s),...
                 ',lambda=',string(GDparams.lambda),',nb_cycles=',string(GDparams.nb_cycles));
