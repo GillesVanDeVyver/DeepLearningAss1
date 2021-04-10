@@ -1,0 +1,1 @@
+nbatch=100,etamin=1e-05,etamax=0.1,ns=800,lambda=0.01,nbcycles=3 acc: 0.507500 loss: 1.569170 cost: 1.405146 

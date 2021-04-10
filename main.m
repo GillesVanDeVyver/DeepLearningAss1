@@ -1,8 +1,7 @@
 rng(400);
-GDparams = struct('n_batch',100,'eta_min',1e-5,'eta_max',1e-1,'n_s', 800, 'nb_cycles',3,'lambda',.01);
-title = strcat('n_batch=',string(GDparams.n_batch),',eta_min=',string(GDparams.eta_min),...
-                ',eta_max=',string(GDparams.eta_max),',n_s=',string(GDparams.n_s),...
-                ',lambda=',string(GDparams.lambda),',nb_cycles=',string(GDparams.nb_cycles));
+GDparams = struct('n_batch',100,'eta_min',1e-5,'eta_max',1e-1,'n_s', 800, 'nb_cycles',2,'lambda',.01);
+
+            
          
 
 % Use all avaialable data
@@ -27,7 +26,6 @@ K = size(trainY,1);
 d = size(trainX,1);
 m = 50;
 nb_layers=2;
-[W,b] = init_params(K,d,m);
 W1 = W{1};
 W2 = W{2};
 b1 = b{1};
@@ -38,12 +36,31 @@ whos b1
 whos W2
 whos b2
 %}
+n = size(trainX,2);
+GDparams.n_s = 2*floor(n / GDparams.n_batch);
 
 
-[Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY, validX, validY, GDparams, W, b, title);
 
-% print final accuracy
-final_acc = ComputeAccuracy(testX, testy, Wstar, bstar)
+
+
+fileID = fopen('Results_broad_lambda_search.txt','w');
+fprintf(fileID,strcat(title,'\n'));
+l_min=-5;
+l_max=-1;
+nb_uniform_tests = 7;
+for i = 0:nb_uniform_tests
+    l = l_min + i*(l_max-l_min)/nb_uniform_tests;
+    GDparams.lambda = 10^l;
+    [W,b] = init_params(K,d,m);
+    title = strcat('nbatch=',string(GDparams.n_batch),',etamin=',string(GDparams.eta_min),...
+                ',etamax=',string(GDparams.eta_max),',ns=',string(GDparams.n_s),...
+                ',lambda=',string(GDparams.lambda),',nbcycles=',string(GDparams.nb_cycles));
+    [Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY,trainy,validX, validY,validy, GDparams, W, b, title);
+    final__test_acc = ComputeAccuracy(testX, testy, Wstar, bstar);
+    [final__test_cost,final__test_loss] = ComputeCost(testX, testY, Wstar, bstar,GDparams.lambda);
+    fprintf(fileID,' lamda=%f acc: %f loss: %f cost: %f \n',GDparams.lambda,final__test_acc,final__test_loss,final__test_cost);
+end
+fclose(fileID);
 
 
 %{

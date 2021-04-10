@@ -1,0 +1,9 @@
+nbatch=100,etamin=1e-05,etamax=0.1,ns=900,lambda=0.1,nbcycles=2
+ lamda=0.000010 acc: 0.507000 loss: 1.401216 cost: 1.402288 
+ lamda=0.000037 acc: 0.510800 loss: 1.398918 cost: 1.402861 
+ lamda=0.000139 acc: 0.510900 loss: 1.400705 cost: 1.414670 
+ lamda=0.000518 acc: 0.512100 loss: 1.392081 cost: 1.436727 
+ lamda=0.001931 acc: 0.512000 loss: 1.386608 cost: 1.486645 
+ lamda=0.007197 acc: 0.507700 loss: 1.398825 cost: 1.544999 
+ lamda=0.026827 acc: 0.481100 loss: 1.515238 cost: 1.710839 
+ lamda=0.100000 acc: 0.390300 loss: 1.772529 cost: 1.969082 
