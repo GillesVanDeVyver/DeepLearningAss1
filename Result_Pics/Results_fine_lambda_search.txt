@@ -1,0 +1,21 @@
+nbatch=100,etamin=1e-05,etamax=0.1,ns=900,nbcycles=2
+ lamda=0.004518 acc: 0.518100 loss: 1.388066 cost: 1.517031 
+ lamda=0.002787 acc: 0.512100 loss: 1.386171 cost: 1.501196 
+ lamda=0.001307 acc: 0.516000 loss: 1.389946 cost: 1.473089 
+ lamda=0.000111 acc: 0.511000 loss: 1.395519 cost: 1.406867 
+ lamda=0.001021 acc: 0.511800 loss: 1.388771 cost: 1.461006 
+ lamda=0.000744 acc: 0.511000 loss: 1.396361 cost: 1.454745 
+ lamda=0.000071 acc: 0.508200 loss: 1.400035 cost: 1.407370 
+ lamda=0.000120 acc: 0.514500 loss: 1.390425 cost: 1.402676 
+ lamda=0.000300 acc: 0.508200 loss: 1.400990 cost: 1.429178 
+ lamda=0.001033 acc: 0.506900 loss: 1.394990 cost: 1.467272 
+ lamda=0.005064 acc: 0.512900 loss: 1.391113 cost: 1.524685 
+ lamda=0.000128 acc: 0.511200 loss: 1.394593 cost: 1.407666 
+ lamda=0.000255 acc: 0.512800 loss: 1.395195 cost: 1.419732 
+ lamda=0.001118 acc: 0.513100 loss: 1.391855 cost: 1.468039 
+ lamda=0.001803 acc: 0.513200 loss: 1.388172 cost: 1.485250 
+ lamda=0.000268 acc: 0.510400 loss: 1.395757 cost: 1.421345 
+ lamda=0.002020 acc: 0.514500 loss: 1.386413 cost: 1.488841 
+ lamda=0.000120 acc: 0.511700 loss: 1.392118 cost: 1.404348 
+ lamda=0.000714 acc: 0.509400 loss: 1.390947 cost: 1.447846 
+ lamda=0.000717 acc: 0.506700 loss: 1.394955 cost: 1.451681 

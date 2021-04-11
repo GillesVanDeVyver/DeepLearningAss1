@@ -25,7 +25,7 @@ function [Wstar,bstar,j,X,Y,plot_info,eval_step,t] = update(eta,n,X,Y,y,XValid, 
         plot_info{5}(eval_step)= ComputeAccuracy(X, y, Wstar, bstar);
         plot_info{6}(eval_step)= ComputeAccuracy(XValid, yvalid, Wstar, bstar);
         eval_step = eval_step+1;
-        t
+        %t
     end
     t = t+1;
 end

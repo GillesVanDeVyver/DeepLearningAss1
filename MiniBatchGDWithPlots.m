@@ -55,7 +55,7 @@ function [Wstar, bstar] = MiniBatchGDWithPlots(X, Y,y, XValid, YValid, yvalid, G
     ylabel('accuracy')
     legend({'training accuracy','validation accuracy'},'Location','northeast')
     sgtitle(plotTitle) 
-    saveas(1,strcat(strrep(plotTitle, '.', ','),'.eps'))
+    saveas(1,strcat(strrep(plotTitle, '.', ','),'.png'))
 end
 
 

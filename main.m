@@ -1,5 +1,5 @@
 rng(400);
-GDparams = struct('n_batch',100,'eta_min',1e-5,'eta_max',1e-1,'n_s', 800, 'nb_cycles',2,'lambda',.01);
+GDparams = struct('n_batch',100,'eta_min',1e-5,'eta_max',1e-1,'n_s', 800, 'nb_cycles',3,'lambda',0.001802);
 
             
          
@@ -11,12 +11,12 @@ GDparams = struct('n_batch',100,'eta_min',1e-5,'eta_max',1e-1,'n_s', 800, 'nb_cy
 [data_batch_4X, data_batch_4Y, data_batch_4y] = LoadBatch('./Datasets/cifar-10-batches-mat/data_batch_4.mat');
 [data_batch_5X, data_batch_5Y, data_batch_5y] = LoadBatch('./Datasets/cifar-10-batches-mat/data_batch_5.mat');
 [testX, testY, testy] = LoadBatch('./Datasets/cifar-10-batches-mat/test_batch.mat');
-trainX = [data_batch_1X data_batch_2X data_batch_3X data_batch_4X data_batch_5X(:,1:5000)];
-trainY = [data_batch_1Y data_batch_2Y data_batch_3Y data_batch_4Y data_batch_5Y(:,1:5000)];
-trainy = [data_batch_1y;data_batch_2y;data_batch_3y;data_batch_4y;data_batch_5y(1:5000)];
-validX = data_batch_5X(:,5000:10000);
-validY = data_batch_5Y(:,5000:10000);
-validy = data_batch_5y(5000:10000);
+trainX = [data_batch_1X data_batch_2X data_batch_3X data_batch_4X data_batch_5X(:,1:9000)];
+trainY = [data_batch_1Y data_batch_2Y data_batch_3Y data_batch_4Y data_batch_5Y(:,1:9000)];
+trainy = [data_batch_1y;data_batch_2y;data_batch_3y;data_batch_4y;data_batch_5y(1:9000)];
+validX = data_batch_5X(:,9000:10000);
+validY = data_batch_5Y(:,9000:10000);
+validy = data_batch_5y(9000:10000);
 
 % preprocess data
 trainX = PreProcess(trainX);
@@ -26,25 +26,60 @@ K = size(trainY,1);
 d = size(trainX,1);
 m = 50;
 nb_layers=2;
+n = size(trainX,2);
+[W,b] = init_params(K,d,m);
 W1 = W{1};
 W2 = W{2};
 b1 = b{1};
 b2 = b{2};
+
+
+title = strcat('nbatch=',string(GDparams.n_batch),',etamin=',string(GDparams.eta_min),...
+            ',etamax=',string(GDparams.eta_max),',ns=',string(GDparams.n_s),...
+            ',lambda=',string(GDparams.lambda),',nbcycles=',string(GDparams.nb_cycles));
+[Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY,trainy,validX, validY,validy, GDparams, W, b, title);
+final__test_acc = ComputeAccuracy(testX, testy, Wstar, bstar)
+[final__test_cost,final__test_loss] = ComputeCost(testX, testY, Wstar, bstar,GDparams.lambda)
+
 %{
-whos W1
-whos b1
-whos W2
-whos b2
-%}
-n = size(trainX,2);
+% Fine lambda search
+
 GDparams.n_s = 2*floor(n / GDparams.n_batch);
+fileID = fopen('Results_fine_lambda_search.txt','w');
+str = strcat('nbatch=',string(GDparams.n_batch),',etamin=',string(GDparams.eta_min),...
+                ',etamax=',string(GDparams.eta_max),',ns=',string(GDparams.n_s),...
+                ',nbcycles=',string(GDparams.nb_cycles));
+fprintf(fileID,strcat(str,'\n'));
+l_opti_broad = -3.286;
+l_min=l_opti_broad-1;
+l_max=l_opti_broad+1;
+nb_tests = 20;
+rand_nbs = rand(nb_tests, 1);
+for i = 1:nb_tests
+    l = l_min + (l_max - l_min)*rand_nbs(i);
+    GDparams.lambda = 10^l;
+    title = strcat('nbatch=',string(GDparams.n_batch),',etamin=',string(GDparams.eta_min),...
+                ',etamax=',string(GDparams.eta_max),',ns=',string(GDparams.n_s),...
+                ',lambda=',string(GDparams.lambda),',nbcycles=',string(GDparams.nb_cycles));
+    [Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY,trainy,validX, validY,validy, GDparams, W, b, title);
+    final__test_acc = ComputeAccuracy(testX, testy, Wstar, bstar);
+    [final__test_cost,final__test_loss] = ComputeCost(testX, testY, Wstar, bstar,GDparams.lambda);
+    fprintf(fileID,' lamda=%f acc: %f loss: %f cost: %f \n',GDparams.lambda,final__test_acc,final__test_loss,final__test_cost);
+    [W,b] = init_params(K,d,m); %re init for next iteration
+end
+fclose(fileID);
+%}
 
 
+%{
+% Broad lambda search
 
-
-
+GDparams.n_s = 2*floor(n / GDparams.n_batch);
 fileID = fopen('Results_broad_lambda_search.txt','w');
-fprintf(fileID,strcat(title,'\n'));
+str = strcat('nbatch=',string(GDparams.n_batch),',etamin=',string(GDparams.eta_min),...
+                ',etamax=',string(GDparams.eta_max),',ns=',string(GDparams.n_s),...
+                ',nbcycles=',string(GDparams.nb_cycles));
+fprintf(fileID,strcat(str,'\n'));
 l_min=-5;
 l_max=-1;
 nb_uniform_tests = 7;
@@ -59,8 +94,11 @@ for i = 0:nb_uniform_tests
     final__test_acc = ComputeAccuracy(testX, testy, Wstar, bstar);
     [final__test_cost,final__test_loss] = ComputeCost(testX, testY, Wstar, bstar,GDparams.lambda);
     fprintf(fileID,' lamda=%f acc: %f loss: %f cost: %f \n',GDparams.lambda,final__test_acc,final__test_loss,final__test_cost);
+    [W,b] = init_params(K,d,m); %re init for next iteration
 end
 fclose(fileID);
+%}
+
 
 
 %{
