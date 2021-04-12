@@ -1,5 +1,5 @@
 rng(400);
-GDparams = struct('n_batch',100,'eta_min',1e-5,'eta_max',1e-1,'n_s', 800, 'nb_cycles',10,'lambda',0.001802);
+GDparams = struct('n_batch',215,'eta_min',1e-5,'eta_max',1e-1,'n_s', 418, 'nb_cycles',9,'lambda',0.0046416, 'm',50);
 
             
          
@@ -24,26 +24,73 @@ validX = PreProcess(validX);
 testX = PreProcess(testX);
 K = size(trainY,1);
 d = size(trainX,1);
-m = 50;
 nb_layers=2;
 n = size(trainX,2);
-[W,b] = init_params(K,d,m);
-W1 = W{1};
-W2 = W{2};
-b1 = b{1};
-b2 = b{2};
+
 
 %{
 title = strcat('nbatch=',string(GDparams.n_batch),',etamin=',string(GDparams.eta_min),...
             ',etamax=',string(GDparams.eta_max),',ns=',string(GDparams.n_s),...
-            ',lambda=',string(GDparams.lambda),',nbcycles=',string(GDparams.nb_cycles));
+            ',lambda=',string(GDparams.lambda),',nbcycles=',string(GDparams.nb_cycles),...
+            ',m=',string(GDparams.m));
 [Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY,trainy,validX, validY,validy, GDparams, W, b, title,1);
 final__test_acc = ComputeAccuracy(testX, testy, Wstar, bstar)
 [final__test_cost,final__test_loss] = ComputeCost(testX, testY, Wstar, bstar,GDparams.lambda)
 %}
 
 
-% Exercise 5,1: Fine search
+% Exercise 5.1: More hidden layers
+
+fileID = fopen('Results_more_hidden_nodes.txt','w');
+l_min=-5;
+l_max=-1;
+m_min = 10;
+m_max = 200;
+nb_uniform_tests = 10; % total nb of tests 11^2 = 121
+for i = 0:nb_uniform_tests %lamdda
+    l_exp = l_min + i*(l_max-l_min)/nb_uniform_tests;
+    GDparams.lambda = 10^l_exp;
+    for j = 0:nb_uniform_tests %m 
+        GDparams.m = m_min + j*(m_max-m_min)/nb_uniform_tests;
+        [W,b] = init_params(K,d,GDparams.m);
+        title = strcat('nbatch=',string(GDparams.n_batch),',etamin=',string(GDparams.eta_min),...
+                    ',etamax=',string(GDparams.eta_max),',ns=',string(GDparams.n_s),...
+                    ',lambda=',string(GDparams.lambda),',nbcycles=',string(GDparams.nb_cycles),...
+                    ',m=',string(GDparams.m));
+        [Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY,trainy,validX, validY,validy, GDparams, W, b, title,0);
+        final__test_acc = ComputeAccuracy(testX, testy, Wstar, bstar);
+        [final__test_cost,final__test_loss] = ComputeCost(testX, testY, Wstar, bstar,GDparams.lambda);
+        if isnan(final__test_cost)
+            final__test_cost = 'inf';
+        end
+        if isnan(final__test_loss)
+            final__test_loss = 'inf';
+        end
+        result = strcat(title,' acc:' ,string(final__test_acc),' loss:' ,string(final__test_loss),' cost:' ,string(final__test_cost),'\n')
+        fprintf(fileID,result);
+    end
+end
+fclose(fileID);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%{
+% Exercise 5.1: Fine search
 
 GDparams.n_s = 2*floor(n / GDparams.n_batch);
 fileID = fopen('Results_fine_search.txt','w');
@@ -63,7 +110,8 @@ for i = 1:nb_tests
     GDparams.n_s = 2*floor(n / GDparams.n_batch);
     title = strcat('nbatch=',string(GDparams.n_batch),',etamin=',string(GDparams.eta_min),...
                 ',etamax=',string(GDparams.eta_max),',ns=',string(GDparams.n_s),...
-                ',lambda=',string(GDparams.lambda),',nbcycles=',string(GDparams.nb_cycles));
+                ',lambda=',string(GDparams.lambda),',nbcycles=',string(GDparams.nb_cycles),...
+                ',m=',string(GDparams.m));
     [Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY,trainy,validX, validY,validy, GDparams, W, b, title,0);
     final__test_acc = ComputeAccuracy(testX, testy, Wstar, bstar);
     [final__test_cost,final__test_loss] = ComputeCost(testX, testY, Wstar, bstar,GDparams.lambda);
@@ -75,10 +123,10 @@ for i = 1:nb_tests
     end
     result = strcat(title,' acc:' ,string(final__test_acc),' loss:' ,string(final__test_loss),' cost:' ,string(final__test_cost),'\n')
     fprintf(fileID,result);
-    [W,b] = init_params(K,d,m); %re init for next iteration
+    [W,b] = init_params(K,d,GDparams.m); %re init for next iteration
 end
 fclose(fileID);
-
+%}
 
 
 
@@ -95,7 +143,7 @@ nb_cycles_max = 10;
 nb_uniform_tests = 4; % total nb of tests 4^3 = 64
 %}
 %{
-% Broad grid search 1
+% Broad grid search 2
 
 fileID = fopen('Results_unifrom_grid_search2.txt','w');
 l_min=-3; % best val: -4/3
@@ -114,10 +162,11 @@ for i = 0:nb_uniform_tests %lamdda
         GDparams.n_s = 2*floor(n / GDparams.n_batch);
         for l = 1:nb_uniform_tests %nb_cycles
             GDparams.nb_cycles = round(nb_cycles_min + l*(nb_cycles_max-nb_cycles_min)/nb_uniform_tests);
-            [W,b] = init_params(K,d,m);
+            [W,b] = init_params(K,d,GDparams.m);
             title = strcat('nbatch=',string(GDparams.n_batch),',etamin=',string(GDparams.eta_min),...
                         ',etamax=',string(GDparams.eta_max),',ns=',string(GDparams.n_s),...
-                        ',lambda=',string(GDparams.lambda),',nbcycles=',string(GDparams.nb_cycles));
+                        ',lambda=',string(GDparams.lambda),',nbcycles=',string(GDparams.nb_cycles),...
+                        ',m=',string(GDparams.m));
             [Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY,trainy,validX, validY,validy, GDparams, W, b, title,0);
             final__test_acc = ComputeAccuracy(testX, testy, Wstar, bstar);
             [final__test_cost,final__test_loss] = ComputeCost(testX, testY, Wstar, bstar,GDparams.lambda);
@@ -129,19 +178,23 @@ for i = 0:nb_uniform_tests %lamdda
             end
             result = strcat(title,' acc:' ,string(final__test_acc),' loss:' ,string(final__test_loss),' cost:' ,string(final__test_cost),'\n')
             fprintf(fileID,result);
-            [W,b] = init_params(K,d,m); %re init for next iteration
+            [W,b] = init_params(K,d,GDparams.m); %re init for next iteration
         end
     end
 end
 fclose(fileID);
-
-
 %}
 
 
 
 %{
 % checking gradient
+
+[W,b] = init_params(K,d,GDparams.m);
+W1 = W{1};
+W2 = W{2};
+b1 = b{1};
+b2 = b{2};
 
 gradTestX = trainX(1:20, 1:5);
 gradTestY = trainY(:, 1:5);
