@@ -8,3 +8,11 @@ second search
 nbatch=215,etamin=1e-05,etamax=0.1,ns=418,lambda=0.0046416,nbcycles=9 acc:0.5269 loss:1.3596 cost:1.5208
 nbatch=215,etamin=1e-05,etamax=0.1,ns=418,lambda=0.0046416,nbcycles=10 acc:0.5269 loss:1.358 cost:1.5219
 nbatch=215,etamin=1e-05,etamax=0.1,ns=418,lambda=0.0046416,nbcycles=11 acc:0.5265 loss:1.3575 cost:1.5236
+
+
+fine search
+
+
+nbatch=173,etamin=1e-05,etamax=0.1,ns=520,lambda=0.0037402,nbcycles=10 acc:0.5231 loss:1.3557 cost:1.5155
+nbatch=277,etamin=1e-05,etamax=0.1,ns=324,lambda=0.0059768,nbcycles=10 acc:0.5229 loss:1.3624 cost:1.5338
+nbatch=236,etamin=1e-05,etamax=0.1,ns=380,lambda=0.0050988,nbcycles=10 acc:0.5214 loss:1.3611 cost:1.5274

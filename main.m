@@ -1,5 +1,5 @@
 rng(400);
-GDparams = struct('n_batch',100,'eta_min',1e-5,'eta_max',1e-1,'n_s', 800, 'nb_cycles',3,'lambda',0.001802);
+GDparams = struct('n_batch',100,'eta_min',1e-5,'eta_max',1e-1,'n_s', 800, 'nb_cycles',10,'lambda',0.001802);
 
             
          
@@ -42,39 +42,48 @@ final__test_acc = ComputeAccuracy(testX, testy, Wstar, bstar)
 [final__test_cost,final__test_loss] = ComputeCost(testX, testY, Wstar, bstar,GDparams.lambda)
 %}
 
-%{
-% Fine search
+
+% Exercise 5,1: Fine search
 
 GDparams.n_s = 2*floor(n / GDparams.n_batch);
-fileID = fopen('Results_fine_lambda_search.txt','w');
-str = strcat('nbatch=',string(GDparams.n_batch),',etamin=',string(GDparams.eta_min),...
-                ',etamax=',string(GDparams.eta_max),',ns=',string(GDparams.n_s),...
-                ',nbcycles=',string(GDparams.nb_cycles));
-fprintf(fileID,strcat(str,'\n'));
-l_opti_broad = -3.286;
-l_min=l_opti_broad-1;
-l_max=l_opti_broad+1;
+fileID = fopen('Results_fine_search.txt','w');
+l_opti_broad = -7/3;
+l_min=l_opti_broad-1/5;
+l_max=l_opti_broad+1/5;
+n_batch_exp_opti_broad = 7/3;
+n_batch_exp_min = n_batch_exp_opti_broad-1/5; 
+n_batch_exp_max = n_batch_exp_opti_broad+1/5;
 nb_tests = 20;
 rand_nbs = rand(nb_tests, 1);
 for i = 1:nb_tests
     l = l_min + (l_max - l_min)*rand_nbs(i);
     GDparams.lambda = 10^l;
+    n_batch_exp = n_batch_exp_min + (n_batch_exp_max-n_batch_exp_min)*rand_nbs(i);
+    GDparams.n_batch = floor(10^n_batch_exp);
+    GDparams.n_s = 2*floor(n / GDparams.n_batch);
     title = strcat('nbatch=',string(GDparams.n_batch),',etamin=',string(GDparams.eta_min),...
                 ',etamax=',string(GDparams.eta_max),',ns=',string(GDparams.n_s),...
                 ',lambda=',string(GDparams.lambda),',nbcycles=',string(GDparams.nb_cycles));
-    [Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY,trainy,validX, validY,validy, GDparams, W, b, title,1);
+    [Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY,trainy,validX, validY,validy, GDparams, W, b, title,0);
     final__test_acc = ComputeAccuracy(testX, testy, Wstar, bstar);
     [final__test_cost,final__test_loss] = ComputeCost(testX, testY, Wstar, bstar,GDparams.lambda);
-    fprintf(fileID,' lamda=%f acc: %f loss: %f cost: %f \n',GDparams.lambda,final__test_acc,final__test_loss,final__test_cost);
+    if isnan(final__test_cost)
+        final__test_cost = 'inf';
+    end
+    if isnan(final__test_loss)
+        final__test_loss = 'inf';
+    end
+    result = strcat(title,' acc:' ,string(final__test_acc),' loss:' ,string(final__test_loss),' cost:' ,string(final__test_cost),'\n')
+    fprintf(fileID,result);
     [W,b] = init_params(K,d,m); %re init for next iteration
 end
 fclose(fileID);
-%}
+
 
 
 
 %{
-% Broad grid search 1
+% Exercise 5,1: Broad grid search 1
 
 fileID = fopen('Results_unifrom_grid_search1.txt','w');
 l_min=-5; % best val: -2
@@ -89,11 +98,11 @@ nb_uniform_tests = 4; % total nb of tests 4^3 = 64
 % Broad grid search 1
 
 fileID = fopen('Results_unifrom_grid_search2.txt','w');
-l_min=-3;
+l_min=-3; % best val: -4/3
 l_max=-1;
-n_batch_exp_min = 1;
+n_batch_exp_min = 1; % best val: 2.3324
 n_batch_exp_max = 3;
-nb_cycles_min = 8.1; 
+nb_cycles_min = 8.1; % best val: 10
 nb_cycles_max = 11.1;
 nb_uniform_tests = 3; % total nb of tests 3^3 = 27
 for i = 0:nb_uniform_tests %lamdda
