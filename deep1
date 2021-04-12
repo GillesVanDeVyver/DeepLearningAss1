@@ -1,0 +1,10 @@
+nbatch=316,etamin=1e-05,etamax=0.1,ns=284,lambda=0.01,nbcycles=10 acc:0.5167 loss:1.3899 cost:1.5753
+nbatch=56,etamin=1e-05,etamax=0.1,ns=1606,lambda=0.001,nbcycles=3 acc:0.5144 loss:1.3864 cost:1.4827
+nbatch=56,etamin=1e-05,etamax=0.1,ns=1606,lambda=0.01,nbcycles=10 acc:0.5139 loss:1.4003 cost:1.5755
+
+
+second search
+
+nbatch=215,etamin=1e-05,etamax=0.1,ns=418,lambda=0.0046416,nbcycles=9 acc:0.5269 loss:1.3596 cost:1.5208
+nbatch=215,etamin=1e-05,etamax=0.1,ns=418,lambda=0.0046416,nbcycles=10 acc:0.5269 loss:1.358 cost:1.5219
+nbatch=215,etamin=1e-05,etamax=0.1,ns=418,lambda=0.0046416,nbcycles=11 acc:0.5265 loss:1.3575 cost:1.5236
