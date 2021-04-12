@@ -14,7 +14,7 @@ function [Wstar,bstar,j,X,Y,plot_info,eval_step,t] = update(eta,n,X,Y,y,XValid, 
     else
         j=1;
     end
-    if plot & mod(t,eval_interval) == 0
+    if plot && mod(t,eval_interval) == 0
         [plot_info{1}(eval_step),plot_info{3}(eval_step)] = ComputeCost(X, Y, Wstar, bstar,GDparams.lambda);
         [plot_info{2}(eval_step),plot_info{4}(eval_step)] = ComputeCost(XValid, YValid, Wstar, bstar,GDparams.lambda);
         plot_info{5}(eval_step)= ComputeAccuracy(X, y, Wstar, bstar);

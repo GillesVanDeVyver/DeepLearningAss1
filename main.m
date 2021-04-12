@@ -1,5 +1,5 @@
 rng(400);
-GDparams = struct('n_batch',215,'eta_min',1e-5,'eta_max',1e-1,'n_s', 418, 'nb_cycles',9,'lambda',0.0046416, 'm',50);
+GDparams = struct('n_batch',215,'eta_min',1e-5,'eta_max',1e-1,'n_s', 418, 'nb_cycles',9,'lambda',0.0025119, 'm',200);
 
             
          
@@ -27,18 +27,19 @@ d = size(trainX,1);
 nb_layers=2;
 n = size(trainX,2);
 
+% Exercise 5.1: Ensemble classifier
 
-%{
+[W,b] = init_params(K,d,GDparams.m);
 title = strcat('nbatch=',string(GDparams.n_batch),',etamin=',string(GDparams.eta_min),...
             ',etamax=',string(GDparams.eta_max),',ns=',string(GDparams.n_s),...
             ',lambda=',string(GDparams.lambda),',nbcycles=',string(GDparams.nb_cycles),...
             ',m=',string(GDparams.m));
-[Wstar, bstar] = MiniBatchGDWithPlots(trainX, trainY,trainy,validX, validY,validy, GDparams, W, b, title,1);
-final__test_acc = ComputeAccuracy(testX, testy, Wstar, bstar)
-[final__test_cost,final__test_loss] = ComputeCost(testX, testY, Wstar, bstar,GDparams.lambda)
-%}
+[W_enseble, b_ensemble] = MiniBatchGDEnsemble(trainX, trainY,trainy,validX, validY,validy, GDparams, W,b, title,1);
+final__test_acc_ensemble = ComputeAccuracyEnsemble(testX, testy, W_enseble, b_ensemble)
+final__test_acc_no_ensemble = ComputeAccuracy(testX, testy, W_enseble{GDparams.nb_cycles}, b_ensemble{GDparams.nb_cycles})
 
 
+%{
 % Exercise 5.1: More hidden layers
 
 fileID = fopen('Results_more_hidden_nodes.txt','w');
@@ -71,22 +72,7 @@ for i = 0:nb_uniform_tests %lamdda
     end
 end
 fclose(fileID);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+%}
 
 
 %{

@@ -16,3 +16,11 @@ fine search
 nbatch=173,etamin=1e-05,etamax=0.1,ns=520,lambda=0.0037402,nbcycles=10 acc:0.5231 loss:1.3557 cost:1.5155
 nbatch=277,etamin=1e-05,etamax=0.1,ns=324,lambda=0.0059768,nbcycles=10 acc:0.5229 loss:1.3624 cost:1.5338
 nbatch=236,etamin=1e-05,etamax=0.1,ns=380,lambda=0.0050988,nbcycles=10 acc:0.5214 loss:1.3611 cost:1.5274
+
+
+
+More hidden nodes
+nbatch=215,etamin=1e-05,etamax=0.1,ns=418,lambda=0.0025119,nbcycles=9,m=200 acc:0.5519 loss:1.2973 cost:1.54
+nbatch=215,etamin=1e-05,etamax=0.1,ns=418,lambda=0.0025119,nbcycles=9,m=181 acc:0.5515 loss:1.2946 cost:1.5315
+nbatch=215,etamin=1e-05,etamax=0.1,ns=418,lambda=0.0063096,nbcycles=9,m=200 acc:0.5491 loss:1.2909 cost:1.5368
+
