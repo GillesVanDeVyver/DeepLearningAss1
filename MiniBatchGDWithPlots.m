@@ -1,4 +1,4 @@
-function [Wstar, bstar] = MiniBatchGDWithPlots(X, Y,y, XValid, YValid, yvalid, GDparams, W, b, plotTitle,plot)
+function [Wstar, bstar] = MiniBatchGDWithPlots(X, Y,y, XValid, YValid, yvalid, GDparams, W, b, plotTitle,plot_bool)
     rng(400);
     n_s = GDparams.n_s;
     Wstar=W;
@@ -7,7 +7,7 @@ function [Wstar, bstar] = MiniBatchGDWithPlots(X, Y,y, XValid, YValid, yvalid, G
     eval_per_cycle = 10;
     nb_eval_points = GDparams.nb_cycles*eval_per_cycle;
     eval_interval = floor((2*n_s)/eval_per_cycle);
-    if plot
+    if plot_bool
         cost_train = zeros(nb_eval_points+1,1);
         cost_valid = zeros(nb_eval_points+1,1);
         loss_train = zeros(nb_eval_points+1,1);
@@ -25,14 +25,14 @@ function [Wstar, bstar] = MiniBatchGDWithPlots(X, Y,y, XValid, YValid, yvalid, G
     for l=0:GDparams.nb_cycles-1
         while t<(2*l+1)*n_s
             eta = GDparams.eta_min+(t-2*l*n_s)/n_s*(GDparams.eta_max-GDparams.eta_min);
-            [Wstar,bstar,batch_offset,X,Y,plot_info,eval_step,t] = update(eta,n,X,Y,y,XValid, YValid,yvalid,Wstar,bstar,GDparams,nb_layers,batch_offset,t,eval_interval,eval_step,plot_info,plot);
+            [Wstar,bstar,batch_offset,X,Y,plot_info,eval_step,t] = update(eta,n,X,Y,y,XValid, YValid,yvalid,Wstar,bstar,GDparams,nb_layers,batch_offset,t,eval_interval,eval_step,plot_info,plot_bool);
         end
         while t<2*(l+1)*n_s
             eta= GDparams.eta_max-(t-(2*l+1)*n_s)/n_s*(GDparams.eta_max-GDparams.eta_min);
-            [Wstar,bstar,batch_offset,X,Y,plot_info,eval_step,t] = update(eta,n,X,Y,y,XValid, YValid,yvalid,Wstar,bstar,GDparams,nb_layers,batch_offset,t,eval_interval,eval_step,plot_info,plot);
+            [Wstar,bstar,batch_offset,X,Y,plot_info,eval_step,t] = update(eta,n,X,Y,y,XValid, YValid,yvalid,Wstar,bstar,GDparams,nb_layers,batch_offset,t,eval_interval,eval_step,plot_info,plot_bool);
         end
     end
-    if plot
+    if plot_bool
         [plot_info{1}(nb_eval_points+1),plot_info{3}(nb_eval_points+1)] = ComputeCost(X, Y, Wstar, bstar,GDparams.lambda);
         [plot_info{2}(nb_eval_points+1),plot_info{4}(nb_eval_points+1)] = ComputeCost(XValid, YValid, Wstar, bstar,GDparams.lambda);
         plot_info{5}(nb_eval_points+1)= ComputeAccuracy(X, y, Wstar, bstar);
